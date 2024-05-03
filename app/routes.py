@@ -232,3 +232,48 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.commit()
     return redirect('/')
+
+
+# @app.route('/edit_post/<int:post_id>')
+# @login_required
+# def update_post(post_id):
+#     post = db.session.scalar(
+#             sa.select(Post).where(Post.id == post_id))
+#     form = PostForm(obj=post)
+#     return render_template('edit_post.html', title=_('Edit Post'),
+#                            form=form)
+
+
+# @app.route('/edit_post/<int:post_id>', methods=['POST'])
+# @login_required
+# def update_post(post_id):
+#     post = db.session.scalar(
+#             sa.select(Post).where(Post.id == post_id))
+#     print("111111111111111", post)
+#     form = PostForm(obj=post)
+#     print("2222222222", post)
+#     if form.validate_on_submit():
+#         post.body = form.post.data
+#         print("333333333", post)
+#         db.session.commit()
+#         flash(_('Your changes have been saved.'))
+#         return redirect(url_for('index'))
+#     return render_template('edit_post.html', title=_('Edit Post'),
+#                            form=form)
+
+
+@app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def update_post(post_id):
+    post = db.session.scalar(
+            sa.select(Post).where(Post.id == post_id))
+    form = PostForm(obj=post)
+
+    if form.validate_on_submit():
+        post.body = form.post.data
+        db.session.commit()
+        flash(_('Your changes have been saved.'))
+        return redirect(url_for('index'))
+
+    return render_template('edit_post.html', title=_('Edit Post'),
+                           form=form)
